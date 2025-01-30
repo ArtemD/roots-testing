@@ -1,0 +1,44 @@
+services:
+  wordpress:
+    image: bitnami/php-fpm:latest
+    container_name: bedrock-php
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+    depends_on:
+      - db
+    networks:
+      - bedrock-net
+
+  db:
+    image: mysql:8.0
+    container_name: bedrock-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - bedrock-net
+
+  nginx:
+    image: nginx:latest
+    container_name: bedrock-nginx
+    volumes:
+      - .:/var/www/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8080:80"
+    depends_on:
+      - wordpress
+    networks:
+      - bedrock-net
+
+networks:
+  bedrock-net:
+
+volumes:
+  db_data:
