@@ -1,5 +1,6 @@
 services:
   wordpress:
+    build: .
     image: bitnami/php-fpm:latest
     container_name: bedrock-php
     volumes:
